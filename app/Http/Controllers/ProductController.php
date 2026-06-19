@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Season;
 
 class ProductController extends Controller
 {
@@ -15,22 +16,46 @@ public function index()
 }
 
     // 商品詳細
-    public function detail($productId)
-    {
-        return view('products.detail');
-    }
+public function detail($id)
+{
+    $product = Product::findOrFail($id);
+    return view('products.detail', compact('product'));
+}
+
 
     // 商品登録フォーム
-    public function showRegister()
-    {
-        return view('products.register');
-    }
+public function showRegister()
+{
+    $seasons = Season::all();
+    return view('products.register', compact('seasons'));
+}
 
     // 商品登録処理
-    public function register(Request $request)
-    {
-        // 後で実装
-    }
+public function register(Request $request)
+{
+    // 1. バリデーション
+    $validated = $request->validate([
+        'name' => 'required',
+        'price' => 'required|integer',
+        'description' => 'required',
+        'season' => 'required|array', 
+        'image' => 'required|image',
+    ]);
+
+    // 2. 商品を保存
+    $product = Product::create([
+        'name' => $validated['name'],
+        'price' => $validated['price'],
+        'description' => $validated['description'],
+        'image_path' => '後で実装',
+    ]);
+
+// 3. 季節を紐づける
+    $product->seasons()->sync($validated['season']);
+
+    // 4. 一覧へリダイレクト
+    return redirect()->route('products.index');
+}
 
     // 商品更新フォーム
     public function showUpdate($productId)
