@@ -4,6 +4,12 @@
     <div>
         <p>{{ $product->name }}</p>
         <p>{{ $product->price }}円</p>
-        <img src="{{ asset('storage/images/' . $product->image_path) }}" width="150">
+
+
+        <a href="{{ route('products.detail', $product->id) }}">
+            <img src="{{ asset('storage/images/' . $product->image_path) }}" width="150">
+            <p>{{ $product->name }}</p>
+        </a>
+
     </div>
 @endforeach
