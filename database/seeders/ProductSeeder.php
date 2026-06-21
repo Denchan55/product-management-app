@@ -7,6 +7,7 @@ use Illuminate\Database\Seeder;
 use App\Models\Product;
 use App\Models\Season;
 
+
 class ProductSeeder extends Seeder
 {
     /**
