@@ -4,6 +4,9 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductController;
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/products/register', [ProductController::class, 'showRegister'])
+    ->name('products.register');
+
 
 // 商品登録
 Route::get('/products/register', [ProductController::class, 'showRegister'])->name('products.register');

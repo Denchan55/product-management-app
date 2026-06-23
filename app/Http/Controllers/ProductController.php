@@ -6,15 +6,36 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\Season;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 class ProductController extends Controller
 {
     // 商品一覧
-public function index()
+public function index(Request $request)
 {
-    $products = Product::all(); // DBから全件取得
+    // ベースクエリ
+    $query = Product::query();
+
+    // 🔍 商品名検索（部分一致）
+    $query->when($request->keyword, function ($q) use ($request) {
+        $q->where('name', 'like', '%' . $request->keyword . '%');
+    });
+
+    // ↕ 並び替え
+    $query->when($request->sort === 'high', function ($q) {
+        $q->orderBy('price', 'desc');
+    });
+
+    $query->when($request->sort === 'low', function ($q) {
+        $q->orderBy('price', 'asc');
+    });
+
+    // 📄 ページネーション（検索条件を保持）
+    $products = $query->paginate(6)->appends($request->query());
+
     return view('products.index', compact('products'));
 }
+
 
     // 商品詳細
 public function detail($id)

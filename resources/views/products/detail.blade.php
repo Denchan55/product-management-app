@@ -1,4 +1,5 @@
-<h1>商品詳細</h1>
+<!-- <h1>商品詳細</h1> -->
+@vite('resources/css/app.css')
 
 <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data">
     @csrf
@@ -40,17 +41,21 @@
         <div style="color:red;">{{ $message }}</div>
     @enderror
     <!-- 画像 -->
-    <input type="file" name="image">
-    @if ($product->image_path)
-        <img src="{{ asset('storage/images/' . $product->image_path) }}" alt="商品画像" width="200">
-    @endif
+    <img id="preview" src="{{ asset('storage/images/' . $product->image_path) }}" width="300">
+    <input type="file" id="image" name="image">
+    @error('image')
+        <div style="color:red;">{{ $message }}</div>
+    @enderror
 
     @error('image')
         <div style="color:red;">{{ $message }}</div>
     @enderror
     <!-- 説明 -->
     <p>商品説明</p>
-    <textarea name="description">{{ old('description', $product->description) }}</textarea>
+    <textarea name="description" style="resize: none; width: 100%; height: 120px;">
+    {{ old('description', $product->description) }}
+</textarea>
+
     @error('description')
         <div style="color:red;">
             <div>商品説明を入力してください</div>
@@ -66,3 +71,11 @@
     </form>
 
 </form>
+<script>
+    document.getElementById('image').addEventListener('change', function (e) {
+        const file = e.target.files[0];
+        if (file) {
+            document.getElementById('preview').src = URL.createObjectURL(file);
+        }
+    });
+</script>

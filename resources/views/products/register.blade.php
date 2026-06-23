@@ -1,4 +1,5 @@
 <h1>商品登録</h1>
+@vite('resources/css/app.css')
 
 <form action="{{ route('products.register.post') }}" method="POST" enctype="multipart/form-data">
     @csrf
