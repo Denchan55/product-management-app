@@ -55,7 +55,6 @@
     <textarea name="description" style="resize: none; width: 100%; height: 120px;">
     {{ old('description', $product->description) }}
 </textarea>
-
     @error('description')
         <div style="color:red;">
             <div>商品説明を入力してください</div>
@@ -63,7 +62,11 @@
         </div>
     @enderror
     <a href="{{ route('products.index') }}">戻る</a>
-    <button type="submit">変更を保存</button>
+    <form action="{{ route('products.update', $product->id) }}" method="POST">
+        @csrf
+        @method('PUT')
+        <button type="submit">変更を保存</button>
+    </form>
     <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('削除しますか？')">
         @csrf
         @method('DELETE')

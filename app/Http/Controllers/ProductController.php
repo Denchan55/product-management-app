@@ -100,7 +100,7 @@ public function update(Request $request, $id)
         'price' => 'required|integer|min:0|max:10000',
         'description' => 'required|max:120',
         'season' => 'required|array',
-        'image' => 'required|image|mimes:png,jpeg',
+        'image' => 'nullable|image|mimes:png,jpeg',
         ], [
     'name.required' => '商品名を入力してください',
     'price.required' => '値段を入力してください',
@@ -121,23 +121,19 @@ public function update(Request $request, $id)
 
     // ★ 新しい画像がアップロードされた場合のみ処理
     if ($request->hasFile('image')) {
-
-        // ★ 古い画像を削除（余裕があれば）
+        // ★ 古い画像を削除
         if ($product->image_path) {
-            Storage::delete('public/images/' . $product->image_path);
+        Storage::delete('public/images/' . $product->image_path);
         }
-
         // ★ 新しい画像を保存
         $path = $request->file('image')->store('public/images');
-        $product->image_path = basename($path);
+        $product->image = basename($path);
     }
-
     $product->save();
-
     // ★ 季節を更新
     $product->seasons()->sync($validated['season'] ?? []);
-
-    return redirect()->route('products.detail', $id);
+    // 一覧へ遷移
+    return redirect()->route('products.index');
 }
     // 商品検索
     public function search(Request $request)
@@ -147,7 +143,15 @@ public function update(Request $request, $id)
 
     // 商品削除
     public function delete($productId)
-    {
-        // 後で実装
-    }
+{
+    $product = Product::findOrFail($productId);
+
+    $product->seasons()->detach();
+
+    Storage::delete('public/images/' . $product->image_path);
+    // 本体の削除
+    $product->delete();
+    return redirect()->route('products.index');
+}
+
 }

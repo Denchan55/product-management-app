@@ -22,4 +22,4 @@ Route::get('/products/{id}', [ProductController::class, 'detail'])->name('produc
 Route::put('/products/{id}', [ProductController::class, 'update'])->name('products.update');
 
 // 商品削除（動的）
-Route::delete('/products/{productId}/delete', [ProductController::class, 'delete'])->name('products.destroy');
+Route::delete('/products/{productId}', [ProductController::class, 'delete'])->name('products.destroy');
